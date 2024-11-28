@@ -7,6 +7,8 @@
 #include "audio/AudioManager.h"
 #include "network/NetworkManage.h"
 #include "rom/ROMLoader.h"
+#include "security/AuthManager.h"
+#include "security/ROMValidator.h"
 
 namespace fs = std::filesystem;
 
@@ -17,7 +19,7 @@ int main(int argc, char* argv[]) {
     AudioManager audioManager;
     Render renderer;
     NetworkManage networkManager;
-    
+
     // Cargar configuración
     if (!config.load("config.ini")) {
         logger.logError("Error al cargar el archivo de configuración.");
@@ -30,6 +32,10 @@ int main(int argc, char* argv[]) {
         logger.logError("Error al inicializar el emulador.");
         return -1;
     }
+
+    // Autenticación de usuario
+    AuthManager authManager;
+    authManager.login();  // Pedir al usuario que se autentique
 
     // Listar los archivos ROM disponibles en la carpeta
     std::string romsDir = "assets/roms/ROM";
@@ -59,6 +65,13 @@ int main(int argc, char* argv[]) {
 
     if (choice < 1 || choice > romFiles.size()) {
         std::cout << "Selección no válida." << std::endl;
+        return -1;
+    }
+
+    // Validar el ROM seleccionado antes de cargarlo
+    ROMValidator romValidator;
+    if (!romValidator.validateROM(romFiles[choice - 1])) {
+        std::cout << "No se puede cargar la ROM. La validación falló." << std::endl;
         return -1;
     }
 
