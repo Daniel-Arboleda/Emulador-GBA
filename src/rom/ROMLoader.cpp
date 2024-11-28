@@ -3,7 +3,7 @@
 #include <iostream>
 
 ROMLoader::ROMLoader() {
-    // Constructor: se puede inicializar romData si es necesario
+    // Constructor: Aquí podrías inicializar alguna variable si es necesario
 }
 
 ROMLoader::~ROMLoader() {
